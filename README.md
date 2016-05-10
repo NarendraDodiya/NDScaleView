@@ -6,6 +6,8 @@ Android scale view library.
 ![alt tag](https://raw.github.com/NarendraDodiya/NDScaleView/master/doc/images/graphic_feature.png)
 
 
+![alt tag](https://raw.github.com/NarendraDodiya/NDScaleView/master/doc/images/scroll_sample.gif)
+
 Developed By
 ============
 
