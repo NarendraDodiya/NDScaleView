@@ -27,9 +27,9 @@ package com.nd.scaleview;
 
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -93,8 +93,28 @@ public class HorizontalScaleView extends AdapterView<ListAdapter> {
     private boolean mDataChanged = false;
     private int mFirstPosition = 0;
 
+    private int mIndicatorColor;
+
+
+    public HorizontalScaleView(Context context) {
+        this(context, null);
+    }
+
     public HorizontalScaleView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    public HorizontalScaleView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        if (isInEditMode()) {
+            return;
+        }
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.HorizontalScaleView, 0, 0);
+        mIndicatorColor = a.getColor(R.styleable.HorizontalScaleView_indicatorColor, 0);
+
+        a.recycle();
+
         initView();
     }
 
@@ -199,8 +219,7 @@ public class HorizontalScaleView extends AdapterView<ListAdapter> {
     protected void dispatchDraw(Canvas canvas) {
     	super.dispatchDraw(canvas);
     	Paint m_Paint =new Paint();
-		m_Paint.setColor(Color.parseColor("#f5d342"));
-        UnitView view = (UnitView)getChildAt(0);
+		m_Paint.setColor(mIndicatorColor);
  		m_Paint.setStrokeWidth(7);
 		canvas.drawLine(canvas.getWidth()/2, 0, canvas.getWidth()/2, canvas.getHeight(), m_Paint);
     }
