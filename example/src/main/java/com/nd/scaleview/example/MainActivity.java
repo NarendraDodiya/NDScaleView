@@ -8,14 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.nd.scaleview.HorizontalScaleView;
-import com.nd.scaleview.UnitView;
+import com.nd.scaleview.ScaleAdapter;
 
 
 
@@ -38,13 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
         mScaleView = (HorizontalScaleView) findViewById(R.id.scale);
         mScaleView.setOnScrollListener(m_ScrollListener);
-
-        int currentValue = 25;
-
-        int position =  (int)(currentValue / mFactor);
-        double fraction =  (currentValue/mFactor) - position;
-        int singlefactor = (int)(fraction*(mFactor/100));
-        setAdapter(0 , 300, position, singlefactor);
+        int minValue = 0;
+        int maxValue = 300;
+        mScaleAdapter = new ScaleAdapter(mContext, minValue, maxValue, mFactor);
+        mScaleView.setAdapter(mScaleAdapter);
+        mScaleView.setCurrentValue(25);
 
         mHandler = new Handler(new Handler.Callback() {
             @Override
@@ -64,17 +59,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    private void setAdapter(final int minValue, int maxValue, final double scaleCurrentValue, final int scaleSmallShift){
-        mScaleAdapter = new ScaleAdapter(mContext, minValue, maxValue, mFactor);
-        mScaleView.setAdapter(mScaleAdapter);
-        mScaleView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mScaleView.setCurrentPosition((int) Math.round(scaleCurrentValue) - minValue, scaleSmallShift);
-            }
-        }, 100);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,47 +108,4 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-
-
-    private class ScaleAdapter extends BaseAdapter {
-        private int MIN = 5;
-        private int MAX = 0;
-        private int factor = 1;
-
-        public ScaleAdapter(Context m_Context, int min, int max, int factor){
-            this.MIN = min;
-            this.MAX = max;
-            this.factor = factor;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-
-        @Override
-        public int getCount() {
-            return MAX - MIN;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            UnitView unitView;
-            if(convertView == null) {
-                unitView = new UnitView(mContext);
-            } else {
-                unitView = (UnitView)convertView;
-            }
-            unitView.setDivision(5);
-            unitView.setPosition(MIN + position, factor);
-            return unitView;
-        }
-
-    }
 }

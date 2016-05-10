@@ -95,6 +95,7 @@ public class HorizontalScaleView extends AdapterView<ListAdapter> {
 
     private int mIndicatorColor;
 
+    private float mCurrentValue = 0;
 
     public HorizontalScaleView(Context context) {
         this(context, null);
@@ -268,6 +269,8 @@ public class HorizontalScaleView extends AdapterView<ListAdapter> {
         mAdapter.registerDataSetObserver(mDataObserver);
         mDataChanged = true;
         requestLayout();
+
+        setCurrentValue(mCurrentValue);
     }
 
     private synchronized void reset() {
@@ -286,8 +289,24 @@ public class HorizontalScaleView extends AdapterView<ListAdapter> {
         return mFirstPosition + getChildCount() - 1;
     }
 
+    public void setCurrentValue(float value){
+        this.mCurrentValue = value;
+        int mFactor = 1;
+        final int minValue = 0;
+        final int position =  (int)(mCurrentValue / mFactor);
+        double fraction =  (mCurrentValue/mFactor) - position;
+        final int singleFactor = (int)(fraction*(mFactor/100));
 
-    public void setCurrentPosition(int position, int subPosition){
+        if (mAdapter != null) {
+            postDelayed(new Runnable() {
+                public void run() {
+                    setCurrentPosition(Math.round(position) - minValue, singleFactor);
+                }
+            }, 100);
+        }
+    }
+
+    private void setCurrentPosition(int position, int subPosition){
         setSelection(position);
         final int x = mSpecificLeft;
         final int width = getWidth()/2;
