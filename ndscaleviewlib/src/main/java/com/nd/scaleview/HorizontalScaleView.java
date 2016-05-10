@@ -89,6 +89,7 @@ public class HorizontalScaleView extends AdapterView<ListAdapter> {
     private OnItemClickListener mOnItemClicked;
     private OnItemLongClickListener mOnItemLongClicked;
     private OnScrollListener mOnScrolled;
+    private ValueUpdateListener mValueUpdateListener;
 
     private boolean mDataChanged = false;
     private int mFirstPosition = 0;
@@ -172,7 +173,19 @@ public class HorizontalScaleView extends AdapterView<ListAdapter> {
         mOnItemLongClicked = listener;
     }
 
-    public void setOnScrollListener(OnScrollListener listener) {
+
+    public void setValueUpdateListener(ValueUpdateListener valueUpdateListener) {
+        this.mValueUpdateListener = valueUpdateListener;
+        setOnScrollListener(new ValueUpdater(this) {
+            @Override
+            public void onValueAvailable(String value) {
+                mValueUpdateListener.onValueUpdate(value);
+            }
+        });
+    }
+
+
+    private void setOnScrollListener(OnScrollListener listener) {
         mOnScrolled = listener;
     }
 

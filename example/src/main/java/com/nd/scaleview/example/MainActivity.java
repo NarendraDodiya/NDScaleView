@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.nd.scaleview.HorizontalScaleView;
 import com.nd.scaleview.ScaleAdapter;
-
+import com.nd.scaleview.ValueUpdateListener;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private Context mContext = null;
     private TextView m_tvWeight = null;
     private int mFactor = 1;
-    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,27 +33,15 @@ public class MainActivity extends AppCompatActivity {
         m_tvWeight = (TextView) findViewById(R.id.tv_value);
 
         mScaleView = (HorizontalScaleView) findViewById(R.id.scale);
-        mScaleView.setOnScrollListener(m_ScrollListener);
         int minValue = 0;
         int maxValue = 300;
         mScaleAdapter = new ScaleAdapter(mContext, minValue, maxValue, mFactor);
         mScaleView.setAdapter(mScaleAdapter);
         mScaleView.setCurrentValue(25);
-
-        mHandler = new Handler(new Handler.Callback() {
+        mScaleView.setValueUpdateListener(new ValueUpdateListener() {
             @Override
-            public boolean handleMessage(Message msg) {
-                Log.i("OnScrollListener", "scrolling :" + msg.arg1);
-                int[] para = mScaleView.getCurrentPosition();
-                Log.i("Calculate ",+para[0]+" "+para[1]+" "+para[2]+" "+para[3]);
-
-                int kg = para[0];
-                int addition = para[1]/5;
-                kg = kg + addition;
-
-                int gm = (para[1]%5)*2;
-                m_tvWeight.setText(kg+"."+gm+" kg");
-                return true;
+            public void onValueUpdate(String value) {
+                m_tvWeight.setText(value);
             }
         });
     }
@@ -81,31 +68,4 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    HorizontalScaleView.OnScrollListener m_ScrollListener=new HorizontalScaleView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(final AdapterView<?> view, int status) {
-
-            if (((HorizontalScaleView) view).isScrollFinish()) {
-//                Toast.makeText(mContext, "scroll finished", Toast.LENGTH_SHORT).show();
-
-            }
-        }
-
-        @Override
-        public void onScroll(AdapterView<?> view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            Message mMessage = Message.obtain();
-            mMessage.arg1 = firstVisibleItem;
-            mHandler.sendMessage(mMessage);
-        }
-
-        public void onFlingHorizontalView(int mDirection) {
-
-        }
-
-        @Override
-        public void onUp(AdapterView<?> view) {
-
-        }
-    };
 }
